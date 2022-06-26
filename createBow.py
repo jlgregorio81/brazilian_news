@@ -1,8 +1,7 @@
-from ast import operator
 import pandas as pd, nltk
 
 #load the file
-fileName =  './poder-lavajato-dataset.csv'
+fileName =  'clean_dataset/poder-lavajato-dataset.csv'
 
 #load the file as csv
 df = pd.read_csv(fileName, encoding='latin-1')
@@ -17,18 +16,20 @@ for index, row in df.iterrows():
         else:
             bagOfWords[word] = 1
     i+=1
-    if i == 20:
-        break
+    print(f"Processing word number: {i}\n")
 
 #sort 
 sortedBoW = sorted(bagOfWords.items(), key=lambda x: x[1], reverse=True)
 
+#create a file with Bow
+bowFile = open('bow.csv','w+')
+
 i = 0;
+bowFile.write("word,count\n")
 for word in sortedBoW:
     i+=1
-    print(f"{i} - {word[0]} - {word[1]}")
-    if i >= 100:
-        break
+    bowFile.write(f"{word[0]},{word[1]}\n")
+    print(f"Writing {i}")
 
 
-
+bowFile.close()

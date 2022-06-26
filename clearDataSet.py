@@ -35,40 +35,40 @@ i = -1
 for index, row in df.iterrows():
     i+=1
     print(f"Processing register num:{i} \n")
-    if row['category'] == 'poder' and 'lava-jato' in row['link']:
+    if 'esporte' in row['category'].lower():
         try:
             tokenizedText = nltk.tokenize.word_tokenize(row['title'])
             cleanTitle = [ word for word in tokenizedText if not word.lower() in stopWords and word.isalnum() and word not in specialChars and len(word) > 1 ]
             cleanTitle = nlp(' '.join(cleanTitle))
-            cleanTitle = [word.lemma_.lower() for word in cleanTitle]
+            cleanTitle = [ word.lemma_.lower() for word in cleanTitle ]
             tokenizedText = nltk.tokenize.word_tokenize(row['text'])
             cleanText = [ word for word in tokenizedText if not word.lower() in stopWords and word.isalnum() and word not in specialChars and len(word) > 1 ]
             cleanText = nlp(' '.join(cleanText))
-            cleanText = [word.lemma_.lower() for word in cleanText]
+            cleanText = [ word.lemma_.lower() for word in cleanText ]
             #tokenize title and text - the rest is string
             newDataSet.append([cleanTitle, cleanText, row['date'], row['category'], row['link']])
         except Exception as e:
             print(f"Title: {row['title']}")
-            print(f"Valor de i: {i}")
+            print(f"Value of: {i}")
             continue
 
 newFile = open("clean_data_set.csv", "w+")
 
-id = 1
+line = 2
 newFile.write("id,title,date,category,url,text\n")
 for row in newDataSet:
-    id = i
     title = '"' + ','.join(row[0]) + '"'
     date = '"' + row[2] + '"'
     category = '"' + row[3] + '"'
     url = '"' + row[4] + '"'
     text = '"' + ','.join(row[1]) + '"'
     try:
-        newFile.write(f"{i},{title},{date},{category},{url},{text} \n")
+        newFile.write(f"{line},{title},{date},{category},{url},{text} \n")
+        line+=1
     except Exception as e:
         print(f"Error: {e}")
         print(f"{title}")
-    i+=1
-    print(f"Writing register num: {i} \n")
+    print(f"Writing register num: {line} \n")
+
     
-newFile.close
+newFile.close()
