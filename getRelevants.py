@@ -3,9 +3,9 @@
 import pandas as pd
 
 
-scores = pd.read_csv('scores-esporte.csv')
+scores = pd.read_csv('scores/scores-painel-do-leitor.csv')
 
-df = pd.read_csv('clean_dataset/esporte-dataset.csv', encoding='latin-1')
+df = pd.read_csv('clean_dataset/painel-do-leitor-dataset.csv', encoding='latin-1')
 
 #print(f"{mercadoDataSet.iloc[18710]['id']} - {mercadoDataSet.iloc[18710]['title']} ")
 
@@ -26,7 +26,7 @@ for index, score in scores.iterrows():
     if('lava,jato' in df.iloc[id-2]['text'] ):
         precision = precision + score['score']
         relevants+=1  
-        print(f"-----> Document: {df.iloc[id-2]['id']}\n")
+        #print(f"-----> Document: {df.iloc[id-2]['id']}\n")
     else:
         irrelevants+=1
     #print(f"Index: {index}")
@@ -56,7 +56,8 @@ for index, score in scores.iterrows():
     #     break
     
 #map = division the sum of precision by total of documents in dataset
-map = round(precision/len(df), 2)
+map = round(precision/len(df), 40)
+print(f"Precision: {precision}---->")
 
 print(f"Relevants: {relevants}")
 print(f"Irrelevants: {irrelevants}")

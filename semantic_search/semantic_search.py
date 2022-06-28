@@ -1,37 +1,61 @@
+from posixpath import split
 from sentence_transformers import SentenceTransformer, util
-import torch, pandas as pd
+import pandas as pd
+from torch import embedding
 
-embedder = SentenceTransformer('all-MiniLM-L6-v2')
+model = SentenceTransformer('all-MiniLM-L6-v2')
+
+# Two lists of sentences
+#sentences1 = ['petrobras operacao lava jato stf delacao']
+#sentences2 = ['segio moro aciona stf operação lava jato delação lula dilma ']
 
 
-#read the file 
-df = pd.read_csv('../clean_dataset/painel-do-leitor-dataset.csv', encoding='latin-1')
+dataSetFile = pd.read_csv('../clean_dataset/painel-do-leitor-dataset.csv', encoding='latin-1')
+query = ['petrobras corrupção lula delação moro odebrecht propina stf pt dilma']
+
+qryEmbedding = model.encode(query, convert_to_tensor=True)
 
 corpus = []
-for index, row in df.iterrows():
-    doc = row['text'].split(',')
-    corpus.append(doc)
+cosineScores = []
+i = 1
+for index, row in dataSetFile.iterrows():
+    print(f'Processing register {i}')
+    text = row['text'].split(',')
+    text = [' '.join(text)]
+    textEmbedding = model.encode(text, convert_to_tensor=True)
+    cosineScore = util.cos_sim(qryEmbedding, textEmbedding)
+    #print(f'Cosine Score: {round(cosineScore[0][0],4)} ')
+    #print(f'Cosine Score: {type(cosineScore)} ')
+    id = int(row['id'])
+    cosineScores.append({'id': id, 'score': cosineScore[0][0]})
+    i+=1
+
+def scoreSort(e):
+    return e['score']
+#sort the scores 
+cosineScores.sort(key=scoreSort, reverse=True)
+
+#put in a file
+i = 1
+scoreFile = open('cosin_scores.csv', 'w+')
+scoreFile.write("id,score\n")
+for score in cosineScores:
+    if score['score'] == 0:
+        break
+    else:
+        scoreFile.write(f"{score['id']},{score['score']}\n")
+    print(f'Writing register {i}')
+scoreFile.close()
 
 
-corpus_embeddings = embedder.encode(corpus, convert_to_tensor=True)
 
-# Query sentences:
-queries = ['petrobras', 'corrupção', 'lula', 'delação', 'moro', 'odebrecht', 
-         'propina', 'stf', 'pt', 'dilma']
+#Compute embedding for both lists
+# embeddings1 = model.encode(sentences1, convert_to_tensor=True)
+# embeddings2 = model.encode(sentences2, convert_to_tensor=True)
 
+#Compute cosine-similarits
+# cosine_scores = util.cos_sim(embeddings1, embeddings2)
 
-# Find the closest 5 sentences of the corpus for each query sentence based on cosine similarity
-top_k = min(10, len(corpus))
-for query in queries:
-    query_embedding = embedder.encode(query, convert_to_tensor=True)
-
-    # We use cosine-similarity and torch.topk to find the highest 5 scores
-    cos_scores = util.cos_sim(query_embedding, corpus_embeddings)[0]
-    top_results = torch.topk(cos_scores, k=top_k)
-
-    print("\n\n======================\n\n")
-    print("Query:", query)
-    print("\nTop 5 most similar sentences in corpus:")
-
-    for score, idx in zip(top_results[0], top_results[1]):
-        print(corpus[idx], "(Score: {:.4f})".format(score))
+#Output the pairs with their score
+# for i in range(len(sentences1)):
+    # print("{} \t\t {} \t\t Score: {:.4f}".format(sentences1[i], sentences2[i], cosine_scores[i][i]))

@@ -1,3 +1,4 @@
+>>SENTENCES
 petrobras,2453
 corrup��o,1981
 lula,1743
@@ -8,3 +9,27 @@ propina,1355
 stf,1314
 pt,1102
 dilma,964
+
+
+-------------------------
+>>BIGRAMS
+sergio,moro,617
+esquema,corrup��o,545
+stf,supremo,447
+lavagem,dinheiro, 446
+dilma,rousseff,432
+corrup��o,petrobras,417
+delacao,premiar, 339
+pagamento,propina, 263
+
+===> bigrams = 'moro', 'corrupção', 'stf', 'lavagem', 'dilma', 'petrobras', 'delação', 'propina'
+
+
+trigrams ==> 'stf','moro','corrupção','petrobras','delação',
+
+
+
+
+
+
+

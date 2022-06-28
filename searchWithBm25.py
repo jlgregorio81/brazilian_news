@@ -2,7 +2,7 @@ from rank_bm25 import *
 import pandas as pd, spacy
 
 
-df = pd.read_csv('clean_dataset/esporte-dataset.csv', encoding='latin-1')
+df = pd.read_csv('clean_dataset/painel-do-leitor-dataset.csv', encoding='latin-1')
 
 corpus = []
 for index, row in df.iterrows():
@@ -13,6 +13,11 @@ bm25 = BM25Okapi(corpus)
 
 query = ['petrobras', 'corrupção', 'lula', 'delação', 'moro', 'odebrecht', 
          'propina', 'stf', 'pt', 'dilma']
+
+#bigrams analysis
+#query = ['petrobras', 'corrupção', 'moro', 'delação', 'propina', 'stf']
+
+#'petrobras', 'corrupção', 'moro', 'delação', 'propina', 'stf'
 
 
 #get the scores
